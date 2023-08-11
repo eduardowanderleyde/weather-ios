@@ -3,7 +3,7 @@ import Alamofire
 import SwiftyJSON
 import NVActivityIndicatorView
 import CoreLocation
-
+  
 class ViewController: UIViewController, CLLocationManagerDelegate {
 
     @IBOutlet weak var locationLabel: UILabel!
@@ -68,15 +68,34 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 let jsonWeather = jsonResponse["weather"].array![0]
                 let jsonTemp = jsonResponse["main"]
                 let iconName = jsonWeather["icon"].stringValue
-
+                
                 self.locationLabel.text = jsonResponse["name"].stringValue
                 self.conditionImageView.image = UIImage(named: iconName)
                 self.conditionLabel.text = jsonWeather["main"].stringValue
-                self.temperatureLabel.text = "\(Int(round(jsonTemp["temp"].doubleValue)))°C"
+                self.temperatureLabel.text = "\(Int(round(jsonTemp["temp"].doubleValue)))"
+                
+                let date = Date()
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "EEEE"
+                self.dayLabel.text = dateFormatter.string(from: date)
+                
+                let suffix = iconName.suffix(1)
+                if suffix == "n"{
+                    self.setGreyGradientBackground()
+                }else{
+                    self.setBlueGradientBackground()
+                
+                }
             }
         }
+        self.locationManager.stopUpdatingLocation()
     }
-
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error.localizedDescription)
+    }
+    
+    
     func setBlueGradientBackground() {
         let topColor = UIColor(red: 95.0/255.0, green: 165.0/255.0, blue: 1.0, alpha: 1.0).cgColor
         let bottomColor = UIColor(red: 72.0/255.0, green: 114.0/255.0, blue: 184.0/255.0, alpha: 1.0).cgColor
